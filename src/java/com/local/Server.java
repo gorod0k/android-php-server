@@ -20,19 +20,17 @@ public class Server {
 
         // Используем Handler, чтобы точно показывать Toasts в UI-потоке
         Handler uiHandler = new Handler(Looper.getMainLooper());
-        final File logFile;
+        File log;
         try {
-            // Для Android 10+ используем getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
             java.io.File downloadsDir = context.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS);
             if (downloadsDir == null) {
-                // fallback для старых устройств
                 downloadsDir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
             }
-            logFile = new File(downloadsDir, "php_server_log.txt");
+            log = new File(downloadsDir, "php_server_log.txt");
         } catch (Exception e) {
-            // fallback на внутреннюю память, если что-то пошло не так
-            logFile = new File(context.getCacheDir(), "php_server_log.txt");
+            log = new File(context.getCacheDir(), "php_server_log.txt");
         }
+        final File logFile = log;
 
         try {
             // 1. Ищем бинарник
