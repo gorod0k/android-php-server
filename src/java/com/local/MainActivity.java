@@ -12,6 +12,9 @@ import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.File;
@@ -20,6 +23,8 @@ import java.io.FileOutputStream;
 public class MainActivity extends AppCompatActivity {
 
     private WebView webView;
+    private TextView logView;
+    private StringBuilder logBuffer = new StringBuilder();
     private static final int PERMISSION_REQUEST_CODE = 100;
     // Путь к корню сайта: /storage/emulated/0/HTDOCS
     private final File DOC_ROOT = new File(Environment.getExternalStorageDirectory(), "www");
@@ -28,9 +33,34 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1. Создаем WebView программно (без XML)
+        // Создаем контейнер
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+
+        // Создаем TextView для логов
+        logView = new TextView(this);
+        logView.setTextSize(10);
+        logView.setBackgroundColor(android.graphics.Color.parseColor("#1e1e1e"));
+        logView.setTextColor(android.graphics.Color.parseColor("#d4d4d4"));
+        logView.setMaxLines(8);
+        logView.setPadding(10, 10, 10, 10);
+        LinearLayout.LayoutParams logParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            300
+        );
+        container.addView(logView, logParams);
+
+        // Создаем WebView
         webView = new WebView(this);
-        setContentView(webView);
+        LinearLayout.LayoutParams webParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            1.0f
+        );
+        container.addView(webView, webParams);
+
+        setContentView(container);
+        logToView("App started");
 
         // Настройки WebView
         WebSettings settings = webView.getSettings();
@@ -49,16 +79,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startServerAndLoadUi() {
+        logToView("Setting up filesystem...");
         // А. Создаем папку и дефолтный файл, если их нет
         setupFileSystem();
 
+        logToView("Starting PHP server...");
         // Б. Запускаем PHP сервер
         // Передаем путь к /sdcard/HTDOCS
         Server.start(this, DOC_ROOT.getAbsolutePath());
 
+        logToView("Loading UI...");
         // В. Загружаем страницу (с небольшой задержкой, чтобы сервер успел подняться)
         webView.postDelayed(() -> {
             webView.loadUrl("http://127.0.0.1:8080");
+            logToView("✓ Server ready: " + DOC_ROOT.getAbsolutePath());
             Toast.makeText(this, "Server running at " + DOC_ROOT.getAbsolutePath(), Toast.LENGTH_LONG).show();
         }, 500);
     }
@@ -67,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (!DOC_ROOT.exists()) {
                 DOC_ROOT.mkdirs();
+                logToView("Created directory: " + DOC_ROOT.getAbsolutePath());
             }
 
             File indexFile = new File(DOC_ROOT, "index.php");
@@ -75,10 +110,22 @@ public class MainActivity extends AppCompatActivity {
                 FileOutputStream fos = new FileOutputStream(indexFile);
                 fos.write(content.getBytes());
                 fos.close();
+                logToView("Created index.php");
             }
         } catch (Exception e) {
             Log.e("MAIN", "File setup failed", e);
+            logToView("✗ Error: " + e.getMessage());
         }
+    }
+
+    private void logToView(String message) {
+        String timestamp = java.text.SimpleDateFormat.getTimeInstance(java.text.SimpleDateFormat.MEDIUM).format(new java.util.Date());
+        String logLine = "[" + timestamp + "] " + message;
+        logBuffer.append(logLine).append("\n");
+        
+        runOnUiThread(() -> {
+            logView.setText(logBuffer.toString());
+        });
     }
 
     // --- Блок работы с правами (Permissions) ---
@@ -92,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestStoragePermission() {
+        logToView("Requesting storage permissions...");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
@@ -114,8 +162,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (hasStoragePermission()) {
+                logToView("✓ Permissions granted");
                 startServerAndLoadUi();
             } else {
+                logToView("✗ Permissions denied");
                 Toast.makeText(this, "Permission denied. Server cannot start.", Toast.LENGTH_SHORT).show();
             }
         }
@@ -126,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                logToView("✓ Permissions granted");
                 startServerAndLoadUi();
             }
         }

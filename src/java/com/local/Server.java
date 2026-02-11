@@ -54,6 +54,7 @@ public class Server {
             // 5. Запускаем процесс
             process = pb.start();
             Log.i(TAG, "Server started! Root: " + documentRoot);
+            Toast.makeText(context, "PHP started. Root: " + documentRoot, Toast.LENGTH_LONG).show();
 
             // 6. Читаем логи сервера в отдельном потоке (чтобы видеть ошибки PHP в Logcat)
             new Thread(() -> {
