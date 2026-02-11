@@ -20,7 +20,7 @@ public class Server {
 
         // Используем Handler, чтобы точно показывать Toasts в UI-потоке
         Handler uiHandler = new Handler(Looper.getMainLooper());
-        File logFile;
+        final File logFile;
         try {
             // Для Android 10+ используем getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
             java.io.File downloadsDir = context.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS);
