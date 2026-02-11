@@ -30,6 +30,9 @@ public class Server {
                 return;
             }
 
+            phpBin.setExecutable(true, false);
+            phpBin.setReadable(true, false);
+
             // 2. Формируем команду запуска
             // php -S 127.0.0.1:8080 -t /sdcard/HTDOCS
             ProcessBuilder pb = new ProcessBuilder(
