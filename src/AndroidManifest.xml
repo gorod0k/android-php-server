@@ -19,12 +19,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        
-        <!-- КРИТИЧНО: Разрешает HTTP (не HTTPS) для localhost -->
         android:usesCleartextTraffic="true"
-        
-        <!-- КРИТИЧНО: Заставляет Android распаковать libphp.so из APK -->
-        <!-- Если это не указать, PHP останется сжатым и не запустится -->
         android:extractNativeLibs="true">
 
         <activity
