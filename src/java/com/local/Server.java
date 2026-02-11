@@ -20,6 +20,7 @@ public class Server {
 
         // Используем Handler, чтобы точно показывать Toasts в UI-потоке
         Handler uiHandler = new Handler(Looper.getMainLooper());
+        File logFile = new File(context.getCacheDir(), "php_server_log.txt");
 
         try {
             // 1. Ищем бинарник
@@ -30,8 +31,8 @@ public class Server {
             if (!phpBin.exists()) {
                 String error = "FATAL: PHP binary NOT found at " + phpBin.getAbsolutePath();
                 Log.e(TAG, error);
-                // ПОКАЗЫВАЕМ ОШИБКУ НА ЭКРАНЕ
                 uiHandler.post(() -> Toast.makeText(context, error, Toast.LENGTH_LONG).show());
+                writeLog(logFile, error);
                 return;
             }
 
@@ -40,6 +41,7 @@ public class Server {
                 phpBin.setExecutable(true, false);
             } catch (Exception e) {
                 Log.w(TAG, "Could not set executable permission");
+                writeLog(logFile, "Could not set executable permission: " + e.toString());
             }
 
             // 2. Создаем кэш и папку root, если их нет
@@ -72,17 +74,31 @@ public class Server {
                     String line;
                     while ((line = reader.readLine()) != null) {
                         Log.d(TAG, "[PHP OUTPUT] " + line);
+                        writeLog(logFile, "[PHP OUTPUT] " + line);
                     }
                 } catch (Exception e) { 
-                    // Игнорируем закрытие потока
+                    writeLog(logFile, "Log reading error: " + e.toString());
                 }
             }).start();
 
         } catch (Exception e) {
-            String errorMsg = "Start failed: " + e.getMessage();
-            Log.e(TAG, errorMsg, e);
-            // ПОКАЗЫВАЕМ ИСКЛЮЧЕНИЕ ПОЛЬЗОВАТЕЛЮ
+            StringBuilder sb = new StringBuilder();
+            sb.append("Start failed: ").append(e.getMessage()).append("\n");
+            for (StackTraceElement el : e.getStackTrace()) {
+                sb.append(el.toString()).append("\n");
+            }
+            String errorMsg = sb.toString();
+            Log.e(TAG, errorMsg);
             uiHandler.post(() -> Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show());
+            writeLog(logFile, errorMsg);
+        }
+        // Запись логов в файл
+        private static void writeLog(File logFile, String msg) {
+            try {
+                java.io.FileWriter fw = new java.io.FileWriter(logFile, true);
+                fw.write(System.currentTimeMillis() + ": " + msg + "\n");
+                fw.close();
+            } catch (Exception ignore) {}
         }
     }
 
