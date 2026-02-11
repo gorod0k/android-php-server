@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private WebView webView;
     private static final int PERMISSION_REQUEST_CODE = 100;
     // Путь к корню сайта: /storage/emulated/0/HTDOCS
-    private final File DOC_ROOT = new File(Environment.getExternalStorageDirectory(), "HTDOCS");
+    private final File DOC_ROOT = new File(Environment.getExternalStorageDirectory(), "www");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
