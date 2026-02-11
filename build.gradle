@@ -27,6 +27,21 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile file("release.keystore")
+            storePassword "123456"
+            keyAlias "release"
+            keyPassword "123456"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+
     // Настройка упаковки (Замена устаревшему extractNativeLibs)
     packagingOptions {
         jniLibs {
