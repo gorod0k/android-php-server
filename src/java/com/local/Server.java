@@ -102,8 +102,6 @@ public class Server {
             fw.close();
         } catch (Exception ignore) {}
     }
-    }
-
     public static void stop() {
         if (process != null) {
             process.destroy();
