@@ -8,13 +8,13 @@ repositories {
 }
 
 android {
-    namespace 'com.local.phpserver'
-    compileSdk 34
+    namespace = 'com.local.phpserver'
+    compileSdk = 34
 
     defaultConfig {
         applicationId "com.local.phpserver"
-        minSdk 24
-        targetSdk 34
+        minSdk = 24
+        targetSdk = 34
         versionCode 1
         versionName "1.0"
         
