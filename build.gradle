@@ -1,10 +1,3 @@
-def gitVersionCode = { ->
-    def p = "git rev-list --count HEAD".execute()
-    p.text.trim().toInteger()
-}
-
-
-
 plugins {
     id 'com.android.application' version '8.4.0'
 }
@@ -17,6 +10,10 @@ repositories {
 android {
     namespace = 'com.local.phpserver'
     compileSdk = 34
+
+    def gitVersionCode = {
+        "git rev-list --count HEAD".execute().text.trim().toInteger()
+    }
 
     defaultConfig {
         applicationId "com.local.phpserver"
