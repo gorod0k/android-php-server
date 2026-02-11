@@ -1,18 +1,7 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        // Подключаем Gradle плагин (версия 8.1.1 стабильна и надежна)
-        classpath 'com.android.tools.build:gradle:8.1.1'
-    }
+plugins {
+    id 'com.android.application' version '8.4.0'
 }
 
-// Применяем плагин классическим способом
-apply plugin: 'com.android.application'
-
-// Репозитории для самого приложения
 repositories {
     google()
     mavenCentral()
