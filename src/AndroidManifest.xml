@@ -2,15 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 1. Разрешение на доступ к сети (чтобы WebView мог открыть http://127.0.0.1) -->
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- 2. Разрешения на хранилище (Старый Android) -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!-- 3. Полный доступ к файлам (Android 11+) -->
-    <!-- Это нужно для доступа к папке /sdcard/www -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
@@ -19,8 +13,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:usesCleartextTraffic="true"
-        android:extractNativeLibs="true">
+        android:usesCleartextTraffic="true">
+        <!-- Атрибут extractNativeLibs удален отсюда, он теперь в build.gradle -->
 
         <activity
             android:name=".MainActivity"
@@ -33,5 +27,4 @@
         </activity>
 
     </application>
-
 </manifest>
