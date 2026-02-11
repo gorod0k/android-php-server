@@ -1,5 +1,21 @@
-plugins {
-    id 'com.android.application' version '8.1.1' // Чуть более стабильная версия для нашего случая
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Подключаем Gradle плагин (версия 8.1.1 стабильна и надежна)
+        classpath 'com.android.tools.build:gradle:8.1.1'
+    }
+}
+
+// Применяем плагин классическим способом
+apply plugin: 'com.android.application'
+
+// Репозитории для самого приложения
+repositories {
+    google()
+    mavenCentral()
 }
 
 android {
@@ -12,18 +28,21 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+        
         ndk {
             abiFilters 'arm64-v8a'
         }
     }
-    
-    // ВМЕСТО манифеста, настраиваем распаковку библиотек здесь
+
+    // Настройка упаковки (Замена устаревшему extractNativeLibs)
     packagingOptions {
         jniLibs {
+            // Эта опция заставляет Android распаковать libphp.so при установке
             useLegacyPackaging = true
         }
     }
 
+    // Наша плоская структура папок
     sourceSets {
         main {
             manifest.srcFile 'src/AndroidManifest.xml'
@@ -32,7 +51,7 @@ android {
             jniLibs.srcDirs = ['src/jniLibs']
         }
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
