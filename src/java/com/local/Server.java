@@ -53,7 +53,6 @@ public class Server {
 
             // 5. Запускаем процесс
             process = pb.start();
-            Log.i(TAG, "PHP PID=" + process.pid());
             Log.i(TAG, "Server started! Root: " + documentRoot);
 
             // 6. Читаем логи сервера в отдельном потоке (чтобы видеть ошибки PHP в Logcat)
