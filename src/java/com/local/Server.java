@@ -33,6 +33,8 @@ public class Server {
             phpBin.setExecutable(true, false);
             phpBin.setReadable(true, false);
 
+            context.getCacheDir().mkdirs();
+
             // 2. Формируем команду запуска
             // php -S 127.0.0.1:8080 -t /sdcard/HTDOCS
             ProcessBuilder pb = new ProcessBuilder(
