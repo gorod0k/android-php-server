@@ -92,14 +92,16 @@ public class Server {
             uiHandler.post(() -> Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show());
             writeLog(logFile, errorMsg);
         }
-        // Запись логов в файл
-        private static void writeLog(File logFile, String msg) {
-            try {
-                java.io.FileWriter fw = new java.io.FileWriter(logFile, true);
-                fw.write(System.currentTimeMillis() + ": " + msg + "\n");
-                fw.close();
-            } catch (Exception ignore) {}
-        }
+    }
+
+    // Запись логов в файл
+    private static void writeLog(File logFile, String msg) {
+        try {
+            java.io.FileWriter fw = new java.io.FileWriter(logFile, true);
+            fw.write(System.currentTimeMillis() + ": " + msg + "\n");
+            fw.close();
+        } catch (Exception ignore) {}
+    }
     }
 
     public static void stop() {
